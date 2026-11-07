@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Waytokaaba.API/Waytokaaba.API.csproj" />
+    <Project Path="src/Waytokaaba.Application/Waytokaaba.Application.csproj" />
+    <Project Path="src/Waytokaaba.Core/Waytokaaba.Core.csproj" />
+    <Project Path="src/Waytokaaba.Infrastructure/Waytokaaba.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Waytokaaba.Tests/Waytokaaba.Tests.csproj" />
+  </Folder>
+</Solution>

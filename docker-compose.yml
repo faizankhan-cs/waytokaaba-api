@@ -1,0 +1,44 @@
+# Local development services.
+#   docker compose up -d db          -> PostgreSQL only (run the API with `dotnet run`)
+#   docker compose --profile api up  -> PostgreSQL + API container
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: waytokaaba-db
+    environment:
+      POSTGRES_DB: waytokaaba
+      POSTGRES_USER: waytokaaba
+      POSTGRES_PASSWORD: waytokaaba_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - waytokaaba_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U waytokaaba -d waytokaaba"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    profiles: ["api"]
+    build:
+      context: .
+      dockerfile: src/Waytokaaba.API/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      PORT: "8080"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=waytokaaba;Username=waytokaaba;Password=waytokaaba_dev"
+      Database__ApplyMigrationsOnStartup: "true"
+      Database__SeedDemoData: "true"
+      Database__AdminEmail: "admin@waytokaaba.local"
+      Database__AdminPassword: "Dev-Admin-Pass-123"
+      Jwt__SigningKey: "dev-only-signing-key-change-me-0123456789abcdef"
+      Cors__AllowedOrigins: "http://localhost:3000"
+    ports:
+      - "8080:8080"
+
+volumes:
+  waytokaaba_pgdata:

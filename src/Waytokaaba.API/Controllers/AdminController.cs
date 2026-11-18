@@ -6,6 +6,8 @@ using Waytokaaba.Application.Auth;
 using Waytokaaba.Application.Common;
 using Waytokaaba.Application.Hotels;
 using Waytokaaba.Application.Packages;
+using Waytokaaba.Application.Transport;
+using Waytokaaba.Application.Visas;
 
 namespace Waytokaaba.API.Controllers;
 
@@ -27,7 +29,7 @@ public sealed class AuthController(IAuthService auth) : ControllerBase
 [Route("api/admin")]
 [Produces("application/json")]
 [Authorize(Policy = AppPolicies.Admin)]
-public sealed class AdminController(IHotelService hotels, IPackageService packages) : ControllerBase
+public sealed class AdminController(IHotelService hotels, IPackageService packages, IVisaService visas, ITransportService transport) : ControllerBase
 {
     [HttpGet("hotels")]
     public Task<PagedResult<HotelSummaryDto>> Hotels([FromQuery] HotelQuery query, CancellationToken ct) =>
@@ -44,4 +46,22 @@ public sealed class AdminController(IHotelService hotels, IPackageService packag
     [HttpGet("packages/{id:int}")]
     public Task<PackageDetailDto> Package(int id, CancellationToken ct) =>
         packages.GetAsync(id.ToString(System.Globalization.CultureInfo.InvariantCulture), adminView: true, ct);
+
+    [HttpGet("visas")]
+    public Task<PagedResult<VisaSummaryDto>> Visas([FromQuery] VisaQuery query, CancellationToken ct) =>
+        visas.SearchAsync(query, adminView: true, ct);
+
+    [HttpGet("visas/{id:int}")]
+    public Task<VisaDetailDto> Visa(int id, CancellationToken ct) =>
+        visas.GetAsync(id.ToString(System.Globalization.CultureInfo.InvariantCulture), adminView: true, ct);
+
+    /// <summary>Transport catalog including hidden vehicles and routes.</summary>
+    [HttpGet("transport")]
+    public Task<TransportCatalogDto> Transport(CancellationToken ct) => transport.GetCatalogAsync(adminView: true, ct);
+
+    [HttpGet("transport/vehicles/{id:int}")]
+    public Task<TransportVehicleDto> TransportVehicle(int id, CancellationToken ct) => transport.GetVehicleAsync(id, ct);
+
+    [HttpGet("transport/routes/{id:int}")]
+    public Task<TransportRouteDto> TransportRoute(int id, CancellationToken ct) => transport.GetRouteAsync(id, ct);
 }

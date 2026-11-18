@@ -37,8 +37,11 @@ services:
       Database__AdminPassword: "Dev-Admin-Pass-123"
       Jwt__SigningKey: "dev-only-signing-key-change-me-0123456789abcdef"
       Cors__AllowedOrigins: "http://localhost:3000"
+    volumes:
+      - waytokaaba_uploads:/app/uploads
     ports:
       - "8080:8080"
 
 volumes:
   waytokaaba_pgdata:
+  waytokaaba_uploads:

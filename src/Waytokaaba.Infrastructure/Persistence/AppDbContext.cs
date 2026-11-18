@@ -14,6 +14,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options, TimePro
     public DbSet<PackageImage> PackageImages => Set<PackageImage>();
     public DbSet<PackageHotel> PackageHotels => Set<PackageHotel>();
     public DbSet<PackageService> PackageServices => Set<PackageService>();
+    public DbSet<Visa> Visas => Set<Visa>();
+    public DbSet<VisaTier> VisaTiers => Set<VisaTier>();
+    public DbSet<TransportVehicle> TransportVehicles => Set<TransportVehicle>();
+    public DbSet<TransportRoute> TransportRoutes => Set<TransportRoute>();
+    public DbSet<TransportRate> TransportRates => Set<TransportRate>();
+    public DbSet<TripSettings> TripSettings => Set<TripSettings>();
     public DbSet<Inquiry> Inquiries => Set<Inquiry>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
 

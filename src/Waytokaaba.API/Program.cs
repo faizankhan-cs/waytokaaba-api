@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Waytokaaba.API.Infrastructure;
@@ -12,6 +14,7 @@ using Waytokaaba.Infrastructure;
 using Waytokaaba.Infrastructure.Auth;
 using Waytokaaba.Infrastructure.Persistence;
 using Waytokaaba.Infrastructure.Persistence.Seed;
+using Waytokaaba.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,7 @@ if (Environment.GetEnvironmentVariable("PORT") is { Length: > 0 } port)
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.PostConfigure<UploadOptions>(o => o.Directory = o.ResolveDirectory(builder.Environment.ContentRootPath));
 
 builder.Services
     .AddControllers(o => o.Filters.Add<ValidationFilter>())
@@ -122,6 +126,22 @@ var app = builder.Build();
 // ---------------- Pipeline ----------------
 
 app.UseForwardedHeaders();
+
+// Admin-uploaded photos. File names are unique, so they can be cached for a year.
+var uploads = app.Services.GetRequiredService<IOptions<UploadOptions>>().Value;
+var uploadsDirectory = uploads.Directory;
+Directory.CreateDirectory(uploadsDirectory);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsDirectory),
+    RequestPath = UploadOptions.RequestPath,
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+        ctx.Context.Response.Headers.XContentTypeOptions = "nosniff";
+    },
+});
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 

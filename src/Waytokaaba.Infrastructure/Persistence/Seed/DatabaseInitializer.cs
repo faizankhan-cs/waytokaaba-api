@@ -48,6 +48,25 @@ public sealed partial class DatabaseInitializer(
             await db.SaveChangesAsync(ct);
             LogSeeded(logger, hotels.Count, packages.Count);
         }
+
+        // Visas have their own guard so databases seeded before the Visa section existed still get the demo listings.
+        if (_options.SeedDemoData && !await db.Visas.AnyAsync(ct))
+        {
+            var visas = DemoVisas.Build();
+            db.Visas.AddRange(visas);
+            await db.SaveChangesAsync(ct);
+            LogSeededVisas(logger, visas.Count);
+        }
+
+        // Transport has its own guard for the same reason.
+        if (_options.SeedDemoData && !await db.TransportVehicles.AnyAsync(ct))
+        {
+            var (vehicles, routes) = DemoTransport.Build();
+            db.TransportVehicles.AddRange(vehicles);
+            db.TransportRoutes.AddRange(routes);
+            await db.SaveChangesAsync(ct);
+            LogSeededTransport(logger, vehicles.Count, routes.Count);
+        }
     }
 
     private async Task EnsureAdminAsync(CancellationToken ct)
@@ -79,6 +98,12 @@ public sealed partial class DatabaseInitializer(
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Seeded {Hotels} hotels and {Packages} packages.")]
     private static partial void LogSeeded(ILogger logger, int hotels, int packages);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Seeded {Visas} demo visas.")]
+    private static partial void LogSeededVisas(ILogger logger, int visas);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Seeded {Vehicles} demo transport vehicles and {Routes} routes.")]
+    private static partial void LogSeededTransport(ILogger logger, int vehicles, int routes);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "No admin account exists. Set Database__AdminEmail and Database__AdminPassword to create one.")]
     private static partial void LogNoAdmin(ILogger logger);

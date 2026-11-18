@@ -112,7 +112,7 @@ public sealed class HotelService(IAppDbContext db) : IHotelService
             ?? throw new NotFoundException("Hotel", id);
 
         if (await db.PackageHotels.AnyAsync(ph => ph.HotelId == id, ct))
-            throw new ConflictException("This hotel is included in one or more packages. Remove it from those packages first, or mark it inactive.");
+            throw new ConflictException("This hotel is part of a package. Remove it from the package first, or mark it inactive instead.");
 
         db.Hotels.Remove(hotel);
         await db.SaveChangesAsync(ct);

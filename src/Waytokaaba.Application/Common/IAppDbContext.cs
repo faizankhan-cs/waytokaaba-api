@@ -13,6 +13,12 @@ public interface IAppDbContext
     DbSet<PackageImage> PackageImages { get; }
     DbSet<PackageHotel> PackageHotels { get; }
     DbSet<PackageService> PackageServices { get; }
+    DbSet<Visa> Visas { get; }
+    DbSet<VisaTier> VisaTiers { get; }
+    DbSet<TransportVehicle> TransportVehicles { get; }
+    DbSet<TransportRoute> TransportRoutes { get; }
+    DbSet<TransportRate> TransportRates { get; }
+    DbSet<TripSettings> TripSettings { get; }
     DbSet<Inquiry> Inquiries { get; }
     DbSet<AdminUser> AdminUsers { get; }
 

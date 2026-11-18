@@ -299,6 +299,9 @@ Add it in Vercel → Project → Domains, then add it to `Cors__AllowedOrigins` 
 | `RateLimits__InquiriesPerMinute`, `RateLimits__LoginsPer5Minutes` | | Defaults 5 and 10 per IP |
 | `Swagger__Enabled` | | Default `true` (admin endpoints still require a token) |
 | `PORT` | | Set automatically by Render; container listens on 8080 otherwise |
+| `Uploads__Directory` | | Folder for admin-uploaded photos. Default `uploads` under the app folder (`/app/uploads` in Docker). **Must be a persistent volume** in production (Coolify: Persistent Storage mounted at `/app/uploads`) and included in backups |
+| `Uploads__PublicBaseUrl` | ✓ in production | Public API origin used in photo URLs, e.g. `https://api.way2kaaba.com`. Needed when the website calls the API on an internal address |
+| `Uploads__MaxBytes` | | Largest upload in bytes, default 10 MB. Photos are stored as WebP, at most 1920 px on the longest side |
 
 ### Website (`.env.example` in Waytokaaba-frontend)
 

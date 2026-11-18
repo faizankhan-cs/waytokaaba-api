@@ -633,6 +633,371 @@ namespace Waytokaaba.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("price");
+
+                    b.Property<int>("RouteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("route_id");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicle_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_transport_rates");
+
+                    b.HasIndex("VehicleId")
+                        .HasDatabaseName("ix_transport_rates_vehicle_id");
+
+                    b.HasIndex("RouteId", "VehicleId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_transport_rates_route_id_vehicle_id");
+
+                    b.ToTable("transport_rates", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_transport_rates_price_positive", "price > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportRoute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("from");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsDemoContent")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_demo_content");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("note");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("To")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("to");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_transport_routes");
+
+                    b.HasIndex("SortOrder", "Id")
+                        .HasDatabaseName("ix_transport_routes_sort_order_id");
+
+                    b.ToTable("transport_routes", (string)null);
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportVehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Bags")
+                        .HasColumnType("integer")
+                        .HasColumnName("bags");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsDemoContent")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_demo_content");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Seats")
+                        .HasColumnType("integer")
+                        .HasColumnName("seats");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_transport_vehicles");
+
+                    b.HasIndex("SortOrder", "Id")
+                        .HasDatabaseName("ix_transport_vehicles_sort_order_id");
+
+                    b.ToTable("transport_vehicles", (string)null);
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TripSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("VisaTransportPricePerPerson")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("visa_transport_price_per_person");
+
+                    b.HasKey("Id")
+                        .HasName("pk_trip_settings");
+
+                    b.ToTable("trip_settings", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_trip_settings_visa_transport_positive", "visa_transport_price_per_person > 0");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            VisaTransportPricePerPerson = 60000m
+                        });
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.Visa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllowedStay")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("allowed_stay");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("country");
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character(2)")
+                        .HasColumnName("country_code")
+                        .IsFixedLength();
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Disclaimer")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("disclaimer");
+
+                    b.Property<string>("EntryType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("entry_type");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IncludesEmbassyFee")
+                        .HasColumnType("boolean")
+                        .HasColumnName("includes_embassy_fee");
+
+                    b.Property<bool>("IncludesInsurance")
+                        .HasColumnType("boolean")
+                        .HasColumnName("includes_insurance");
+
+                    b.Property<bool>("IncludesServiceCharge")
+                        .HasColumnType("boolean")
+                        .HasColumnName("includes_service_charge");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsDemoContent")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_demo_content");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_featured");
+
+                    b.Property<string>("ProcessingTime")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("processing_time");
+
+                    b.PrimitiveCollection<List<string>>("RequiredDocuments")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("required_documents");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("slug");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("summary");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Validity")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("validity");
+
+                    b.Property<string>("VisaFormat")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("visa_format");
+
+                    b.HasKey("Id")
+                        .HasName("pk_visas");
+
+                    b.HasIndex("IsFeatured")
+                        .HasDatabaseName("ix_visas_is_featured");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_visas_slug");
+
+                    b.HasIndex("SortOrder", "Country")
+                        .HasDatabaseName("ix_visas_sort_order_country");
+
+                    b.ToTable("visas", (string)null);
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.VisaTier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("price");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<int>("VisaId")
+                        .HasColumnType("integer")
+                        .HasColumnName("visa_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_visa_tiers");
+
+                    b.HasIndex("VisaId", "SortOrder")
+                        .HasDatabaseName("ix_visa_tiers_visa_id_sort_order");
+
+                    b.ToTable("visa_tiers", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_visa_tiers_price_positive", "price > 0");
+                        });
+                });
+
             modelBuilder.Entity("Waytokaaba.Core.Entities.HotelImage", b =>
                 {
                     b.HasOne("Waytokaaba.Core.Entities.Hotel", "Hotel")
@@ -721,6 +1086,39 @@ namespace Waytokaaba.Infrastructure.Persistence.Migrations
                     b.Navigation("Hotel");
                 });
 
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportRate", b =>
+                {
+                    b.HasOne("Waytokaaba.Core.Entities.TransportRoute", "Route")
+                        .WithMany("Rates")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_transport_rates_transport_routes_route_id");
+
+                    b.HasOne("Waytokaaba.Core.Entities.TransportVehicle", "Vehicle")
+                        .WithMany("Rates")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_transport_rates_transport_vehicles_vehicle_id");
+
+                    b.Navigation("Route");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.VisaTier", b =>
+                {
+                    b.HasOne("Waytokaaba.Core.Entities.Visa", "Visa")
+                        .WithMany("Tiers")
+                        .HasForeignKey("VisaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_visa_tiers_visas_visa_id");
+
+                    b.Navigation("Visa");
+                });
+
             modelBuilder.Entity("Waytokaaba.Core.Entities.Hotel", b =>
                 {
                     b.Navigation("Images");
@@ -737,6 +1135,21 @@ namespace Waytokaaba.Infrastructure.Persistence.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportRoute", b =>
+                {
+                    b.Navigation("Rates");
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.TransportVehicle", b =>
+                {
+                    b.Navigation("Rates");
+                });
+
+            modelBuilder.Entity("Waytokaaba.Core.Entities.Visa", b =>
+                {
+                    b.Navigation("Tiers");
                 });
 #pragma warning restore 612, 618
         }

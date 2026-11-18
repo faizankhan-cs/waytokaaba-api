@@ -21,6 +21,8 @@ ENV ASPNETCORE_ENVIRONMENT=Production \
     DOTNET_RUNNING_IN_CONTAINER=true \
     PORT=8080
 COPY --from=build /app/publish .
+# Admin-uploaded photos. Mount a persistent volume here in production (Coolify: Persistent Storage -> /app/uploads).
+RUN mkdir -p /app/uploads && chown $APP_UID /app/uploads
 # Run as the non-root user shipped with the official .NET images
 USER $APP_UID
 EXPOSE 8080

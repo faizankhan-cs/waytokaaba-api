@@ -41,7 +41,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Cors:AllowedOrigins", "http://localhost:3000");
         builder.UseSetting("RateLimits:InquiriesPerMinute", "1000");
         builder.UseSetting("RateLimits:LoginsPer5Minutes", "1000");
+        builder.UseSetting("Uploads:Directory", UploadsDirectory);
     }
+
+    /// <summary>Temporary folder for photos uploaded during the tests.</summary>
+    public string UploadsDirectory { get; } = Path.Combine(Path.GetTempPath(), "waytokaaba-tests-uploads", Guid.NewGuid().ToString("N"));
 
     public async Task<HttpClient> CreateAdminClientAsync()
     {
